@@ -1,0 +1,3 @@
+import { getCollection } from "@/lib/content";
+import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
+export default async function CataloguesPage() { const catalogues = await getCollection("catalogues"); return <><SiteHeader /><main className="page-shell"><p className="eyebrow">Browse our selection</p><h1>Our <em>catalogues</em></h1><div className="product-grid">{catalogues.map((catalogue, index) => <article className="product-tile" key={`${catalogue.title}-${index}`}><span>Catalogue 0{index + 1}</span><h2>{catalogue.title}</h2><p>{catalogue.description}</p><b>Download catalogue ↗</b></article>)}</div></main><SiteFooter /></>; }

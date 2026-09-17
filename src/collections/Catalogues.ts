@@ -1,0 +1,2 @@
+import type { CollectionConfig } from "payload";
+export const Catalogues: CollectionConfig = { slug: "catalogues", admin: { useAsTitle: "title" }, fields: [{ name: "title", type: "text", required: true }, { name: "description", type: "textarea" }, { name: "cover", type: "upload", relationTo: "media" }, { name: "file", type: "upload", relationTo: "media", required: true }, { name: "publishedAt", type: "date" }] };

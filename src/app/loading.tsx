@@ -1,0 +1,1 @@
+export default function Loading() { return <main className="loading-screen" aria-label="Loading Rasana"><span className="monogram"><i>R</i><i>I</i><i>T</i></span><p>Preparing something good…</p></main>; }

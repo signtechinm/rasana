@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rasana Web
 
-## Getting Started
+Next.js frontend and Payload CMS backend for Rasana International Trading.
 
-First, run the development server:
+## Local CMS setup
+
+1. Start PostgreSQL with `docker compose up -d postgres`.
+2. Copy `.env.example` to `.env`.
+3. Replace `PAYLOAD_SECRET` with a long random value.
+4. Start the app with `npm run dev`.
+5. Run the separately hosted CMS admin service to create the first administrator.
+
+The public frontend works with fallback product, brand, catalogue, and news content when `NEXT_PUBLIC_CMS_URL` is not configured. To read content from a separately hosted CMS, set:
+
+```env
+NEXT_PUBLIC_CMS_URL=http://localhost:3000
+```
+
+## Available API examples
+
+- `/api/products`
+- `/api/brands`
+- `/api/catalogues`
+- `/api/news`
+- `/api/pages`
+
+## Useful commands
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npx tsc --noEmit
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Production checklist
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Set a production `DATABASE_URI` and `PAYLOAD_SECRET`.
+- Set `NEXT_PUBLIC_SITE_URL` to the live domain.
+- Configure media storage and transactional email.
+- Create the first admin user in the separately hosted CMS.
+- Run lint, TypeScript checks, and a production build before deployment.
+- Keep `/admin` protected by Payload authentication and excluded from indexing.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment handoff
 
-## Learn More
+The public Next.js app can be deployed to Vercel or another Node-compatible host. The Payload API/CMS service should use the same `payload.config.ts`, a managed PostgreSQL instance, and persistent media storage. Set `NEXT_PUBLIC_CMS_URL` on the public app to the CMS service URL.
 
-To learn more about Next.js, take a look at the following resources:
+Required production values:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `DATABASE_URI`
+- `PAYLOAD_SECRET`
+- `NEXT_PUBLIC_CMS_URL`
+- `NEXT_PUBLIC_SITE_URL`
+- `CONTACT_EMAIL`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Before launch, verify that `/api/products`, `/api/brands`, `/api/catalogues`, and `/api/news` return CMS data rather than fallback content.

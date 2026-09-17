@@ -1,0 +1,2 @@
+import type { CollectionConfig } from "payload";
+export const BusinessUnits: CollectionConfig = { slug: "business-units", admin: { useAsTitle: "title" }, fields: [{ name: "title", type: "text", required: true }, { name: "slug", type: "text", required: true, unique: true }, { name: "summary", type: "textarea" }, { name: "content", type: "richText" }, { name: "image", type: "upload", relationTo: "media" }, { name: "featured", type: "checkbox", defaultValue: false }] };

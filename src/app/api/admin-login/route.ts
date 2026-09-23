@@ -20,6 +20,11 @@ export async function POST(request: Request) {
       path: "/",
       maxAge: 60 * 60 * 8,
     });
+    response.cookies.set("rasana-admin-session", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      path: "/",
+    });
     return response;
   } catch {
     return NextResponse.json({ message: "Invalid email or password." }, { status: 401 });

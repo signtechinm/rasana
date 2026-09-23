@@ -17,7 +17,7 @@ export async function getContactPage() { const endpoint = process.env.NEXT_PUBLI
 
 export type ContentItem = { name?: string; title: string; slug?: string; description?: string; logoUrl?: string };
 const fallbackBrands: ContentItem[] = [
-  { title: "Origin partners", slug: "origin-partners", description: "Producers selected for their craft, consistency, and point of view." },
+  { title: "Harvest & Field", slug: "harvest-and-field", description: "Producers selected for their craft, consistency, and point of view.", logoUrl: "/brand/partners/harvest-and-field.png" },
   { title: "Rasana essentials", slug: "rasana-essentials", description: "A dependable range built around the everyday needs of food professionals." },
   { title: "North & coast", slug: "north-and-coast", description: "A distinctive collection of coastal flavours and northern pantry staples." },
 ];

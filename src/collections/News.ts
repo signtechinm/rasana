@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 export const News: CollectionConfig = {
   slug: "news",
+  access: { read: () => true },
   admin: { useAsTitle: "title", defaultColumns: ["title", "publishedAt", "status"] },
   fields: [
     { name: "title", type: "text", required: true },

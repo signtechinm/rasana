@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 export const ContactPage: CollectionConfig = {
   slug: "contact-page",
+  access: { read: () => true },
   admin: { useAsTitle: "title", description: "Create one record only. This controls the public contact page." },
   fields: [
     { name: "title", type: "text", required: true, defaultValue: "Tell us what you need." },

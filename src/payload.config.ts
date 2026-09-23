@@ -19,6 +19,6 @@ export default buildConfig({
   collections: [Users, Media, Pages, ProductCategories, Products, Brands, ContactPage, Catalogues, News, BusinessUnits, Locations, SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "development-only-secret-change-me",
-  db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI || "postgres://localhost/rasana" } }),
+  db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI || process.env.DATABASE_URL || "postgres://localhost/rasana" } }),
   typescript: { outputFile: "src/payload-types.ts" },
 });

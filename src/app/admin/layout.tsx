@@ -5,20 +5,20 @@ import { jwtVerify } from "jose";
 import config from "@/payload.config";
 import AdminFrame from "./AdminFrame";
 
-async function isAuthenticated() {
+async function authFailureReason() {
   const cookieStore = await cookies();
   const localToken = cookieStore.get("rasana-admin-session")?.value;
   if (localToken) {
     try {
       await jwtVerify(localToken, new TextEncoder().encode("development-only-secret-change-me"));
-      return true;
+      return null;
     } catch {
       // Ignore stale legacy cookies and continue with Payload authentication.
     }
   }
   const token = cookieStore.get("payload-token")?.value;
 
-  if (!token) return false;
+  if (!token) return "missing-token";
 
   try {
     const payload = await getPayload({ config });
@@ -28,7 +28,7 @@ async function isAuthenticated() {
     );
 
     if ((typeof claims.id !== "string" && typeof claims.id !== "number") || claims.collection !== "users") {
-      return false;
+      return "invalid-claims";
     }
 
     await payload.findByID({
@@ -38,17 +38,18 @@ async function isAuthenticated() {
       depth: 0,
     });
 
-    return true;
+    return null;
   } catch {
-    return false;
+    return "payload-auth-failed";
   }
 }
 
 export default async function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  if (!(await isAuthenticated())) {
-    redirect("/login");
+  const failure = await authFailureReason();
+  if (failure) {
+    redirect(`/login?authDebug=${failure}`);
   }
 
   return <AdminFrame>{children}</AdminFrame>;

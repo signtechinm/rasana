@@ -1,30 +1,27 @@
-import { SignJWT } from "jose";
+import { getPayload } from "payload";
 import { NextResponse } from "next/server";
+import config from "@/payload.config";
 
 export async function POST(request: Request) {
-  if (process.env.NODE_ENV === ("production" as string)) {
-    return NextResponse.json({ message: "Use the Payload authentication endpoint." }, { status: 404 });
-  }
-
   const { email, password } = await request.json();
-  if (email !== "admin@rasana.com" || password !== "Qwerty@123") {
+  try {
+    const payload = await getPayload({ config });
+    const result = await payload.login({
+      collection: "users",
+      data: { email, password },
+      req: request,
+    });
+    if (!result.token) return NextResponse.json({ message: "Invalid email or password." }, { status: 401 });
+    const response = NextResponse.json({ user: result.user });
+    response.cookies.set("payload-token", result.token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 8,
+    });
+    return response;
+  } catch {
     return NextResponse.json({ message: "Invalid email or password." }, { status: 401 });
   }
-
-  const secret = new TextEncoder().encode("development-only-secret-change-me");
-  const token = await new SignJWT({ id: "local-admin", collection: "users" })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("8h")
-    .sign(secret);
-
-  const response = NextResponse.json({ user: { email } });
-  response.cookies.set("rasana-admin-session", token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 60 * 60 * 8,
-  });
-  return response;
 }

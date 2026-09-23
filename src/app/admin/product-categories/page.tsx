@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import "../actions.css";
 
 type Category = { id: string; name: string; slug: string; description?: string; displayOrder?: number; status: "published" | "draft" };
 

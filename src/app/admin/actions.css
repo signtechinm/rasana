@@ -1,3 +1,6 @@
+.cms-table-panel { overflow-x: auto; }
+.cms-data-table { min-width: 760px; overflow-x: auto; }
+
 .cms-data-table .cms-data-row:has(.cms-row-actions) {
   grid-template-columns: minmax(180px, 2fr) minmax(140px, 1.5fr) minmax(100px, 1fr) 80px minmax(150px, auto);
 }

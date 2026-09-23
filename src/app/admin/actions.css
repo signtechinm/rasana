@@ -1,4 +1,5 @@
 .cms-table-panel { overflow-x: auto; }
+.cms-page-heading h1 { font-size: 30px; letter-spacing: -1px; }
 .cms-data-table { min-width: 760px; overflow-x: auto; }
 
 .cms-category-table,

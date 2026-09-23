@@ -1,0 +1,13 @@
+"use client";
+
+import Link from "next/link";
+import { FormEvent, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+
+export default function EditProductCategoryPage() {
+  const { id } = useParams<{ id: string }>(); const router = useRouter(); const [category, setCategory] = useState<Record<string, string | number>>({}); const [loading, setLoading] = useState(true); const [saving, setSaving] = useState(false); const [error, setError] = useState("");
+  useEffect(() => { fetch(`/api/product-categories/${id}`, { credentials: "include" }).then((response) => response.ok ? response.json() : Promise.reject(new Error("Category not found."))).then(setCategory).catch((reason: Error) => setError(reason.message)).finally(() => setLoading(false)); }, [id]);
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setSaving(true); const data = Object.fromEntries(new FormData(event.currentTarget)); const response = await fetch(`/api/product-categories/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ ...data, displayOrder: Number(data.displayOrder || 0) }) }); if (!response.ok) { setError("Could not save this category."); setSaving(false); return; } router.push("/admin/product-categories"); }
+  if (loading) return <main className="cms-page"><p className="cms-table-message">Loading category…</p></main>;
+  return <main className="cms-page"><div className="cms-page-heading"><div><Link className="cms-back-link" href="/admin/product-categories">← Product categories</Link><h1>Edit category</h1><p>Update the category details and publication status.</p></div></div>{error && <p className="cms-table-error">{error}</p>}<form className="panel cms-form" onSubmit={submit}><label>Name<input name="name" defaultValue={String(category.name || "")} required /></label><label>Slug<input name="slug" defaultValue={String(category.slug || "")} required /></label><label>Description<textarea name="description" rows={5} defaultValue={String(category.description || "")} /></label><div className="cms-form-grid"><label>Display order<input name="displayOrder" type="number" defaultValue={String(category.displayOrder || 0)} min="0" /></label><label>Status<select name="status" defaultValue={String(category.status || "published")}><option value="published">Published</option><option value="draft">Draft</option></select></label></div><div className="cms-form-actions"><Link className="secondary-button" href="/admin/product-categories">Cancel</Link><button className="primary-button" type="submit" disabled={saving}>{saving ? "Saving…" : "Save changes"}</button></div></form></main>;
+}

@@ -10,5 +10,7 @@ export const News: CollectionConfig = {
     { name: "content", type: "richText" },
     { name: "image", type: "upload", relationTo: "media" },
     { name: "publishedAt", type: "date" },
+    { name: "status", type: "select", required: true, defaultValue: "draft", options: [{ label: "Published", value: "published" }, { label: "Draft", value: "draft" }] },
+    { name: "seo", type: "group", fields: [{ name: "title", type: "text" }, { name: "description", type: "textarea" }] },
   ],
 };

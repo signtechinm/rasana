@@ -5,6 +5,12 @@
 @import "./what-we-do-fixes.css";
 @import "./type-scale-fixes.css";
 @import "./products-fixes.css";
+@import "./product-detail-fixes.css";
+@import "./admin/admin.css";
+@import "./admin/category-admin.css";
+@import "./admin/product-admin.css";
+@import "./admin/media-admin.css";
+@import "./admin/frame-admin.css";
 @import "./brands-fixes.css";
 @import "./contact-fixes.css";
 @import "./footer-fixes.css";

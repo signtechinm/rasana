@@ -1,0 +1,5 @@
+.cms-form-wide{max-width:900px}.cms-checks{display:flex;gap:25px}.cms-checks label{display:flex;align-items:center;gap:8px}.cms-checks input{width:15px;height:15px;padding:0}@media(max-width:700px){.cms-checks{flex-direction:column;gap:10px}}
+.cms-check-label{display:flex!important;align-items:center;gap:8px}.cms-check-label input{width:15px;height:15px}
+.cms-success{color:#087d55;background:#e4f8ed;border-radius:6px;padding:10px 12px;font-size:13px}
+.field-hint{display:block;color:#73757d;font-weight:400;margin-top:-3px}
+.cms-section-title{font-size:18px;margin:0 0 4px;color:#161719}

@@ -7,6 +7,5 @@ export const Media: CollectionConfig = {
     { name: "alt", type: "text", required: true },
     { name: "caption", type: "text" },
     { name: "credit", type: "text" },
-    { name: "focalPoint", type: "point" },
   ],
 };

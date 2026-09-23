@@ -13,7 +13,7 @@ async function isAuthenticated() {
       await jwtVerify(localToken, new TextEncoder().encode("development-only-secret-change-me"));
       return true;
     } catch {
-      return false;
+      // Ignore stale legacy cookies and continue with Payload authentication.
     }
   }
   const token = cookieStore.get("payload-token")?.value;

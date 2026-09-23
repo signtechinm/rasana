@@ -15,7 +15,7 @@ export async function getHomePage() { const fallback = { homeHeroTitle: "Food an
 
 export async function getContactPage() { const endpoint = process.env.NEXT_PUBLIC_CMS_URL; const fallback = { title: "Tell us what you need.", eyebrow: "Get in touch", intro: "Tell us who you are and what you are looking for, and it will reach the right person.", sectionTitle: "One clear conversation is a good place to start.", sectionBody: "Brand owners: select “brand partnership” so your enquiry reaches the partnerships desk. Buyers: include the specification and volume for a faster answer.", location: "Dubai South Free Zone\nUnited Arab Emirates", email: "hello@rasana.com", whatsappUrl: "https://wa.me/971000000000", formHeading: "Send us an enquiry", formIntro: "" }; if (!endpoint) return fallback; try { const response = await fetch(`${endpoint}/api/contact-page?limit=1`, { next: { revalidate: 60 } }); if (!response.ok) return fallback; return { ...fallback, ...(await response.json()).docs?.[0] }; } catch { return fallback; } }
 
-export type ContentItem = { name?: string; title: string; slug?: string; description?: string };
+export type ContentItem = { name?: string; title: string; slug?: string; description?: string; logoUrl?: string };
 const fallbackBrands: ContentItem[] = [
   { title: "Origin partners", slug: "origin-partners", description: "Producers selected for their craft, consistency, and point of view." },
   { title: "Rasana essentials", slug: "rasana-essentials", description: "A dependable range built around the everyday needs of food professionals." },

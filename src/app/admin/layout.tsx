@@ -27,13 +27,13 @@ async function isAuthenticated() {
       new TextEncoder().encode(payload.secret),
     );
 
-    if (typeof claims.id !== "string" || claims.collection !== "users") {
+    if ((typeof claims.id !== "string" && typeof claims.id !== "number") || claims.collection !== "users") {
       return false;
     }
 
     await payload.findByID({
       collection: "users",
-      id: claims.id,
+      id: String(claims.id),
       overrideAccess: false,
       depth: 0,
     });

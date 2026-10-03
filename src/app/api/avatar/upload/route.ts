@@ -1,6 +1,6 @@
-import { put } from "@vercel/blob";
 import { getPayload } from "payload";
 import config from "@/payload.config";
+import { uploadPublicBlob } from "@/lib/blob";
 
 export async function POST(request: Request) {
   const payload = await getPayload({ config });
@@ -10,6 +10,6 @@ export async function POST(request: Request) {
   const contentType = request.headers.get("content-type") || "application/octet-stream";
   if (!filename || !contentType.startsWith("image/")) return Response.json({ error: "A valid image is required." }, { status: 400 });
   if (!request.body) return Response.json({ error: "No file selected." }, { status: 400 });
-  const blob = await put(`partner-logos/${Date.now()}-${filename.replace(/[^a-zA-Z0-9._-]/g, "-")}`, request.body, { access: "public", contentType });
+  const blob = await uploadPublicBlob(`partner-logos/${Date.now()}-${filename.replace(/[^a-zA-Z0-9._-]/g, "-")}`, request.body, contentType);
   return Response.json(blob);
 }

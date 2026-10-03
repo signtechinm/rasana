@@ -11,6 +11,7 @@ export const Products: CollectionConfig = {
     { name: "brand", type: "text" },
     { name: "description", type: "richText" },
     { name: "image", type: "upload", relationTo: "media" },
+    { name: "productImageUrl", type: "text", admin: { description: "Public Vercel Blob URL for the product image." } },
     { name: "originCountry", type: "text" },
     { name: "packaging", type: "text" },
     { name: "certifications", type: "text" },

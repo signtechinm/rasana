@@ -10,6 +10,10 @@ Next.js frontend and Payload CMS backend for Rasana International Trading.
 4. Start the app with `npm run dev`.
 5. Run the separately hosted CMS admin service to create the first administrator.
 
+### Vercel Blob uploads
+
+Partner logos are uploaded to Vercel Blob through the protected `/api/avatar/upload` endpoint. Create a Blob store in the Vercel project and add its read/write token as `BLOB_READ_WRITE_TOKEN` in the local `.env` and deployment environment. The token must never be exposed through a `NEXT_PUBLIC_` variable.
+
 The public frontend works with fallback product, brand, catalogue, and news content when `NEXT_PUBLIC_CMS_URL` is not configured. To read content from a separately hosted CMS, set:
 
 ```env

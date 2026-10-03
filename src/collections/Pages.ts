@@ -10,6 +10,7 @@ export const Pages: CollectionConfig = {
     { name: "excerpt", type: "textarea" },
     { name: "content", type: "richText" },
     { name: "heroImage", type: "upload", relationTo: "media" },
+    { name: "homeHeroImageUrl", type: "text", admin: { description: "Public Vercel Blob URL for the home-page landing background." } },
     { name: "homeHeroTitle", type: "text" },
     { name: "homeHeroIntro", type: "textarea" },
     { name: "homeIntroTitle", type: "text" },

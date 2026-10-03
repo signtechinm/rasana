@@ -1,4 +1,4 @@
-export type Product = { name: string; slug: string; category: string; description: string; originCountry: string };
+export type Product = { name: string; slug: string; category: string; description: string; originCountry: string; productImageUrl?: string };
 const fallbackProducts: Product[] = [
   { name: "Selected cuts", slug: "selected-cuts", category: "Meat & poultry", description: "Carefully sourced proteins for kitchens that care about provenance.", originCountry: "Global sourcing" },
   { name: "Ocean harvest", slug: "ocean-harvest", category: "Seafood", description: "A considered selection from trusted coastal producers.", originCountry: "Global sourcing" },
@@ -7,11 +7,87 @@ const fallbackProducts: Product[] = [
   { name: "Kitchen ready", slug: "kitchen-ready", category: "Ready meals", description: "Thoughtful prepared solutions for busy modern kitchens.", originCountry: "European partners" },
   { name: "Chef's selection", slug: "chefs-selection", category: "Sauces", description: "Layered sauces and finishing ingredients that make good food better.", originCountry: "Global sourcing" },
 ];
-export async function getProducts(): Promise<Product[]> { const endpoint = process.env.NEXT_PUBLIC_CMS_URL; if (!endpoint) return fallbackProducts; try { const response = await fetch(`${endpoint}/api/products?where[status][equals]=published&sort=displayOrder&limit=100`, { next: { revalidate: 60 } }); if (!response.ok) return fallbackProducts; const docs = (await response.json()).docs as Array<Record<string, unknown>>; return docs.map((item) => ({ ...item, name: String(item.name || ""), slug: String(item.slug || ""), category: typeof item.category === "object" && item.category ? String((item.category as Record<string, unknown>).name || "") : String(item.category || ""), description: String(item.shortDescription || item.description || ""), originCountry: String(item.originCountry || "") })) as Product[]; } catch { return fallbackProducts; } }
+function mapProduct(item: Record<string, unknown>): Product {
+  return {
+    name: String(item.name || ""),
+    slug: String(item.slug || ""),
+    category: typeof item.category === "object" && item.category ? String((item.category as Record<string, unknown>).name || "") : String(item.category || ""),
+    description: String(item.shortDescription || ""),
+    originCountry: String(item.originCountry || ""),
+    productImageUrl: item.productImageUrl ? String(item.productImageUrl) : undefined,
+  };
+}
+
+export async function getProducts(): Promise<Product[]> {
+  const endpoint = process.env.NEXT_PUBLIC_CMS_URL;
+  try {
+    if (endpoint) {
+      const response = await fetch(`${endpoint}/api/products?depth=1&where[status][equals]=published&sort=displayOrder&limit=100`, { next: { revalidate: 60 } });
+      if (!response.ok) return fallbackProducts;
+      return ((await response.json()).docs as Array<Record<string, unknown>>).map(mapProduct);
+    }
+    const { getPayload } = await import("payload");
+    const { default: config } = await import("@/payload.config");
+    const payload = await getPayload({ config });
+    const result = await payload.find({ collection: "products", where: { status: { equals: "published" } }, sort: "displayOrder", depth: 1, limit: 100, overrideAccess: true });
+    return (result.docs as Array<Record<string, unknown>>).map(mapProduct);
+  } catch {
+    return fallbackProducts;
+  }
+}
 export async function getProduct(slug: string) { return (await getProducts()).find((product) => product.slug === slug); }
 
-export async function getPartners(): Promise<ContentItem[]> { const endpoint = process.env.NEXT_PUBLIC_CMS_URL; if (!endpoint) return fallbackBrands; try { const response = await fetch(`${endpoint}/api/brands?where[status][equals]=published&where[featured][equals]=true&sort=displayOrder&limit=100`, { next: { revalidate: 60 } }); if (!response.ok) return fallbackBrands; return (await response.json()).docs as ContentItem[]; } catch { return fallbackBrands; } }
-export async function getHomePage() { const fallback = { homeHeroTitle: "Food and nutrition brands, supplied across the Emirates and the region.", homeHeroIntro: "Rasana International Trading is an independent supply partner based in Dubai South. We represent international food and supplement brands in the UAE and MENA markets.", homeIntroTitle: "Food trade with a steadier point of view.", homeIntroBody: "We say what we can deliver, and we deliver what we said. Supplier vetting, document control, registration and stock cover create dependable supply.", homeCtaTitle: "Start with an honest assessment." }; const endpoint = process.env.NEXT_PUBLIC_CMS_URL; if (!endpoint) return fallback; try { const response = await fetch(`${endpoint}/api/pages?where[slug][equals]=home&limit=1`, { next: { revalidate: 60 } }); if (!response.ok) return fallback; return { ...fallback, ...(await response.json()).docs?.[0] }; } catch { return fallback; } }
+function mapPartner(item: Record<string, unknown>): ContentItem {
+  return {
+    title: String(item.name || item.title || ""),
+    slug: String(item.slug || ""),
+    description: String(item.homeDescription || ""),
+    logoUrl: item.logoUrl ? String(item.logoUrl) : undefined,
+  };
+}
+
+export async function getPartners(): Promise<ContentItem[]> {
+  const endpoint = process.env.NEXT_PUBLIC_CMS_URL;
+  try {
+    if (endpoint) {
+      const response = await fetch(`${endpoint}/api/brands?where[status][equals]=published&where[featured][equals]=true&sort=displayOrder&limit=100`, { next: { revalidate: 60 } });
+      if (!response.ok) return fallbackBrands;
+      return ((await response.json()).docs as Array<Record<string, unknown>>).map(mapPartner);
+    }
+
+    const { getPayload } = await import("payload");
+    const { default: config } = await import("@/payload.config");
+    const payload = await getPayload({ config });
+    const result = await payload.find({
+      collection: "brands",
+      where: { and: [{ status: { equals: "published" } }, { featured: { equals: true } }] },
+      sort: "displayOrder",
+      limit: 100,
+      overrideAccess: true,
+    });
+    return (result.docs as Array<Record<string, unknown>>).map(mapPartner);
+  } catch {
+    return fallbackBrands;
+  }
+}
+export async function getHomePage() {
+  const fallback = { homeHeroTitle: "Food and nutrition brands, supplied across the Emirates and the region.", homeHeroIntro: "Rasana International Trading is an independent supply partner based in Dubai South. We represent international food and supplement brands in the UAE and MENA markets.", homeIntroTitle: "Food trade with a steadier point of view.", homeIntroBody: "We say what we can deliver, and we deliver what we said. Supplier vetting, document control, registration and stock cover create dependable supply.", homeCtaTitle: "Start with an honest assessment.", homeHeroImageUrl: "" };
+  const endpoint = process.env.NEXT_PUBLIC_CMS_URL;
+  try {
+    if (endpoint) {
+      const response = await fetch(`${endpoint}/api/pages?where[slug][equals]=home&limit=1`, { next: { revalidate: 60 } });
+      if (!response.ok) return fallback;
+      return { ...fallback, ...(await response.json()).docs?.[0] };
+    }
+    const { getPayload } = await import("payload");
+    const { default: config } = await import("@/payload.config");
+    const payload = await getPayload({ config });
+    const result = await payload.find({ collection: "pages", where: { slug: { equals: "home" } }, limit: 1, overrideAccess: true });
+    return { ...fallback, ...(result.docs[0] || {}) };
+  } catch {
+    return fallback;
+  }
+}
 
 export async function getContactPage() { const endpoint = process.env.NEXT_PUBLIC_CMS_URL; const fallback = { title: "Tell us what you need.", eyebrow: "Get in touch", intro: "Tell us who you are and what you are looking for, and it will reach the right person.", sectionTitle: "One clear conversation is a good place to start.", sectionBody: "Brand owners: select “brand partnership” so your enquiry reaches the partnerships desk. Buyers: include the specification and volume for a faster answer.", location: "Dubai South Free Zone\nUnited Arab Emirates", email: "hello@rasana.com", whatsappUrl: "https://wa.me/971000000000", formHeading: "Send us an enquiry", formIntro: "" }; if (!endpoint) return fallback; try { const response = await fetch(`${endpoint}/api/contact-page?limit=1`, { next: { revalidate: 60 } }); if (!response.ok) return fallback; return { ...fallback, ...(await response.json()).docs?.[0] }; } catch { return fallback; } }
 
